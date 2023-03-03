@@ -1,68 +1,41 @@
-#!/usr/bin/env python3
-import sys
-import os
-import optparse
-import time
+#!/usr/bin/env python
+# author : abdullah oulahyane
 
 class Ceaser:
-    def __init__(self):
-        self.options = self.getOptions();
+    def __init__(self, op,text,key) -> None:
         self.charset = "".join([chr(i) for i in range(ord('A'),ord('Z')+1)])
-    
-    def getOptions(self):
-        parse = optparse.OptionParser(f"Usage: $python {sys.argv[0]}  ...args ")
-        parse.add_option('-p',dest='OPERATION',type='string',help='specify the operation ex. enc / dec') 
-        parse.add_option('-t',dest='TEXT',type='string',help='specify the palin or encrypted text') 
-        parse.add_option('-k',dest='KEY',type='int',help='specify the key')
-
-        (options,args) = parse.parse_args()
-        if not options.OPERATION or not options.TEXT or not options.KEY:
-            print(parse.usage)
-            exit(-1)        
-        return (options)
+        self.text = text.upper()
+        self.key = key
+        self.op = op
 
     def run(self):
-        match self.options.OPERATION:
-            case "enc":
-                self.encrypt()
-                return
-            case "dec":
-                self.decrypt()
-                return
-            case _:
-                print("operation not found ")
-                exit(-1)
-
-    def print(self,text):
-        for i in text:
-            sys.stdout.write(f"{i}")
-            sys.stdout.flush()
-            time.sleep(0.01)
-
+        if self.op == "enc":
+            self.encrypt()
+        elif self.op == "dec":
+            self.decrypt()
+        else:
+            print("Not supported operation.")
+            exit(-1)
     def encrypt(self):
-        plain = self.options.TEXT.upper()
-        key   = self.options.KEY
-        output = "Encrypted Text : "
-        for char in plain:
+        output = ""
+        for char in self.text:
             if char not in self.charset:
-                output+=char
+                output+= char
             else:
-                output += self.charset[(self.charset.index(char)+key)%26]
-        self.print("Plain Text     : "+plain+"\n")
-        self.print(output)
+                output += self.charset[(self.charset.index(char)+self.key)%26]
+
+        print("Plain: ",self.text,"\nEncryption : ",output)
 
     def decrypt(self):
-        plain = self.options.TEXT.upper()
-        key   = self.options.KEY
-        output = "Decrypted Text : "
-        for char in plain:
+        output = ""
+        for char in self.text:
             if char not in self.charset:
-                output+=char
+                output+= char
             else:
-                output += self.charset[(self.charset.index(char)-key)%26]
-        self.print("Encrypted Text : "+plain+"\n")
-        self.print(output)
+                output += self.charset[(self.charset.index(char)-self.key)%26]
+        print("Plain: ",self.text,"\nDecryption : ",output)
+        
 
-    
 
-Ceaser().run()
+
+Ceaser(input("enter opration [enc/dec]: "),input("Enter text: "),int(input("Enter key: "))).run()
