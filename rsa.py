@@ -4,7 +4,7 @@
 import os
 import sys 
 import random
-
+import math
 
 
 #----------------- RSA Symitric Cryptographic -------------------------
@@ -37,8 +37,9 @@ class RSA:
         self.privateKey = []
         self.publicKey = []
         self.outPut = ""
+        self.generationKeys()
         self.encrypt(plain)
-        self.decrypt(self.privateKey,self.publicKey,self.outPut)
+        #self.decrypt(self.privateKey,self.publicKey,self.outPut)
 
     def getPrimeNumbers(self):
         output = [2, 3, 5, 7] #[item for item in range(1024)]
@@ -52,28 +53,39 @@ class RSA:
                 output.append(num)
         return output
 
+    def generationKeys(self):
+        p = random.choice(self.primesNumbers)
+        q = random.choice(self.primesNumbers)
+        n = p*q
+        euler = (p-1)*(q-1)
+        e = list(filter(lambda x : math.gcd(x,euler) == 1 ,range(2,euler)))[0]
+        self.publicKey = (e,euler)
+        d = 2
+        while 1:
+            if (d*e)%euler:
+                break
+            d+=1
+        self.privateKey = (d,euler)
+
+
     def encrypt(self,plainText):
+        publicKey,euler = self.publicKey
+        output = ""
         for m in plainText:
-            p = random.choice(self.primesNumbers)
-            q = random.choice(self.primesNumbers)
-            n = p*q
-            euler = (p-1)*(q-1)
-            for i in range(2,euler):
-                if i%
-            e = random.choice(range(2,euler))
-            C = ( ord(m) ^ e ) % euler
-            self.outPut += chr(C)
-            self.publicKey.append(e)
-            self.privateKey.append(n)
-        print("privat Key",self.privateKey)
-        print("public Key",self.publicKey)
-        print("Encrypted Text : ",self.outPut)
+            C = math.pow( ord(m) , publicKey )  % euler
+            output += chr(int(C))
+
+        print("public Key",publicKey)
+        print("Encrypted Text : ",output.encode().hex())
 
 
     def decrypt(self,publicKey,cipher):
+        publicKey = self.publicKey
+
         for i in range(len(cipher)):
-            d = 
-            C = 
+            pass
+            # d = 
+            # C = 
 
 
 RSA(input("enter a plain"))
